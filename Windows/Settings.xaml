@@ -1,0 +1,47 @@
+﻿<Window x:Class="PhoneBook.Windows.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PhoneBook.Windows"
+        mc:Ignorable="d"
+        Title="Settings" MinHeight="450" MaxHeight="450" MinWidth="420" MaxWidth="420">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="46" MaxHeight="46"/>
+            <RowDefinition MinHeight="50" MaxHeight="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition MinHeight="50" MaxHeight="50"/>
+        </Grid.RowDefinitions>
+        <Label>Настройки</Label>
+        <StackPanel Grid.Row="1">
+            <TextBlock Padding="0,0,0,6">Строка подключения БД:</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="300" HorizontalAlignment="Left"
+                     Style="{DynamicResource OrdinaryTextBox}"
+                     Text="{Binding DBConnectionString, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <Button Margin="2,0,0,0" Width="60"
+                        Command="{Binding SaveDBConnectionStringCommand}">Сохранить</Button>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="2"  Orientation="Vertical">
+            <TextBlock Padding="0,6,0,6">Путь синхронизации пользователей:</TextBlock>
+            <TextBox Width="360" HorizontalAlignment="Left" 
+                     Style="{DynamicResource OrdinaryTextBox}"
+                     Text="{Binding DomainSearchPath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Padding="0,6,0,6">Синхронизировать 
+                телефонный справочник:</TextBlock>
+            <Button Width="80" Height="40" 
+                    HorizontalAlignment="Left"
+                    Command="{Binding SyncWithADCommand}">Синхронизация</Button>
+            <TextBlock Padding="0,6,0,6" TextWrapping="Wrap">Учетные записи для настроек телефонного справочника:</TextBlock>
+            <Button Width="80" Height="40" 
+                    HorizontalAlignment="Left"
+                    Command="{Binding OpenAccountsCommand}">Редактировать</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Height="40" Width="80" Margin="0,0,2,0"
+                    Command="{Binding GoBackCommand}">Назад</Button>
+        </StackPanel>
+    </Grid>
+</Window>

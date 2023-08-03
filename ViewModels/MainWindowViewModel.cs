@@ -1,0 +1,285 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using PhoneBook.Classes;
+using System.Windows;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
+
+namespace PhoneBook.ViewModels
+{
+    class MainWindowViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+        public MainWindowViewModel()
+        {
+            SelectedIndex = -1;
+            this._openSettingsWindowCommand = new Classes.Command(this.OpenSettingsWindow);
+            this._keyDownBindingCommand = new Classes.Command(this.KeyDownBinding);
+            this._keyUpBindingCommand = new Classes.Command(this.KeyUpBinding);
+            this._keyReturnBindingCommand = new Classes.Command(this.KeyReturnBinding);
+            this._previewMouseUpEventCommand = new Classes.Command(this.PreviewMouseUpEvent);
+            Employees = DBConnection.SelectEmployeesFromDB();
+            _employeesView = CollectionViewSource.GetDefaultView(Employees);
+            _employeesView.GroupDescriptions.Add(new PropertyGroupDescription("Department"));
+            EmployeesView.Filter = i => String.IsNullOrEmpty(SelectedItem) ? true : ((Models.Employee)i).FullName.Contains(SelectedItem)
+            || ((Models.Employee)i).Title.Contains(SelectedItem) || ((Models.Employee)i).Department.Contains(SelectedItem);
+            EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
+            EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+            this._exportPhonebookCommand = new Classes.Command(this.ExportPhonebook);
+        }
+
+        private ICollectionView _employeesView;
+        public ICollectionView EmployeesView
+        {
+            get { return _employeesView; }
+        }
+
+        private readonly Classes.Command _openSettingsWindowCommand;
+        public Classes.Command OpenSettingsWindowCommand
+        {
+            get { return this._openSettingsWindowCommand; }
+        }
+        private void OpenSettingsWindow(object state)
+        {
+            var Login = new Windows.Login();
+            Login.Owner = Application.Current.MainWindow;
+            Login.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Login.ShowDialog();
+            var loginViewModel = Login.DataContext as ViewModels.LoginViewModel;
+            if (loginViewModel.Authenticated)
+            {
+                var Settings = new Windows.Settings();
+                Settings.Owner = Application.Current.MainWindow;
+                Settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                Settings.ShowDialog();
+                var SVM = Settings.DataContext as ViewModels.SettingsViewModel;
+                if (SVM.PhonebookSynchronized)
+                {
+                    Employees.Clear();
+                    foreach (var i in Classes.DBConnection.SelectEmployeesFromDB())
+                    {
+                        Employees.Add(i);
+                    }
+                }
+            }
+        }
+        //
+        //
+        //
+
+        private readonly Classes.Command _keyDownBindingCommand;
+        public Classes.Command KeyDownBindingCommand
+        {
+            get { return this._keyDownBindingCommand; }
+        }
+        private void KeyDownBinding(object state)
+        {
+            if (FilteredFullNames != null && SelectedIndex < FilteredFullNames.Count() - 1)
+            {
+                SelectedIndex = SelectedIndex + 1;
+            }
+            else
+            {
+                if (FilteredFullNames != null && SelectedIndex == FilteredFullNames.Count() - 1)
+                {
+                    SelectedIndex = 0;
+                }
+            }
+        }
+
+        //
+        //
+        //
+
+        private ViewModels.SettingsViewModel CurrentSettingsViewModel { get; set; }
+
+        private ObservableCollection<Models.Employee> _employees;
+        public ObservableCollection<Models.Employee> Employees
+        {
+            get { return _employees; }
+            set
+            {
+                _fullNames = value.Select(x => x.FullName).ToList();
+                ///
+                _fullNames.AddRange(value.Select(x => x.Title).Distinct().ToList());
+                _fullNames.AddRange(value.Select(x => x.Department).Distinct().ToList());
+                ///
+                _employees = value;
+            }
+        }
+        private List<string> _fullNames { get; set; }
+
+        private string _searchString;
+        public string SearchString
+        {
+            get { return _searchString; }
+            set
+            {
+                _searchString = value;
+                ////PopupIsOpen = true;
+                ////if (!String.IsNullOrEmpty(value)) { PopupIsOpen = true; }
+                //if (!(FilteredFullNames == null) && FilteredFullNames.Count() > 0) { PopupIsOpen = true; }
+                //else { PopupIsOpen = false; }
+                OnPropertyChanged("SearchString");
+                OnPropertyChanged("FilteredFullNames");
+            }
+        }
+        public IEnumerable<string> FilteredFullNames
+        {
+            //get
+            //{
+            //    if (SearchString == null) return null;
+            //    //if (!String.IsNullOrEmpty(SelectedItem)) return null;
+            //    if (Employees != null && !String.IsNullOrEmpty(SearchString)) { /*PopupIsOpen = true;*/ return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())); }
+            //    else { return null; }
+            //}
+            get
+            {
+                if (Employees != null && !String.IsNullOrEmpty(SearchString))
+                {
+                    if (_fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())).Count() > 0)
+                    {
+                        PopupIsOpen = true;
+                        return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper()));
+                    }
+                }
+                PopupIsOpen = false;
+                return null;
+            }
+        }
+        //private string _selectedItem;
+        //public string SelectedItem
+        //{
+        //    get
+        //    {
+        //        return _selectedItem;
+        //    }
+        //    set
+        //    {
+        //        if (value != _selectedItem)
+        //        {
+        //            _selectedItem = value;
+        //            //MessageBox.Show($"Selected item - {SelectedItem} and current text in search textbox - {SearchString}");
+        //            SearchString = _selectedItem;
+        //            //ContentVisibility = Visibility.Hidden;
+        //            PopupIsOpen = false;
+        //            _employeesView.Refresh();
+        //        }
+        //        //_selectedItem = value;
+        //        //MessageBox.Show($"Selected item - {SelectedItem} and current text in search textbox - {SearchString}");
+        //        //SearchString = _selectedItem;
+        //        //OnPropertyChanged("SelectedItem");
+        //    }
+        //}
+        private string SelectedItem;
+
+        private bool _popupIsOpen;
+        public bool PopupIsOpen
+        {
+            get
+            {
+                return _popupIsOpen;
+            }
+            set
+            {
+                _popupIsOpen = value;
+                OnPropertyChanged("PopupIsOpen");
+            }
+        }
+
+        private readonly Classes.Command _exportPhonebookCommand;
+        public Classes.Command ExportPhonebookCommand
+        {
+            get { return _exportPhonebookCommand; }
+        }
+        private void ExportPhonebook(object state)
+        {
+            var Export = new Windows.ExportPhonebook();
+            Export.Owner = Application.Current.MainWindow;
+            Export.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Export.ShowDialog();
+        }
+
+        private int _selectedIndex;
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set
+            {
+                _selectedIndex = value;
+                OnPropertyChanged("SelectedIndex");
+            }
+        }
+
+        private readonly Classes.Command _keyUpBindingCommand;
+        public Classes.Command KeyUpBindingCommand
+        {
+            get { return this._keyUpBindingCommand; }
+        }
+        private void KeyUpBinding(object state)
+        {
+            if (SelectedIndex != 0 && FilteredFullNames != null && SelectedIndex < FilteredFullNames.Count())
+            {
+                SelectedIndex = SelectedIndex - 1;
+            }
+            else
+            {
+                if (FilteredFullNames != null && SelectedIndex == 0)
+                {
+                    SelectedIndex = FilteredFullNames.Count() - 1;
+                }
+            }
+        }
+
+        private readonly Classes.Command _keyReturnBindingCommand;
+        public Classes.Command KeyReturnBindingCommand
+        {
+            get { return this._keyReturnBindingCommand; }
+        }
+        private void KeyReturnBinding(object state)
+        {
+            SearchString = FilteredFullNames.ToList()[SelectedIndex];
+            ///
+            SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
+            ///
+            _employeesView.Refresh();
+            PopupIsOpen = false;
+        }
+
+        private readonly Classes.Command _previewMouseUpEventCommand;
+        public Classes.Command PreviewMouseUpEventCommand
+        {
+            get { return this._previewMouseUpEventCommand; }
+        }
+        private void PreviewMouseUpEvent(object state)
+        {
+            SearchString = FilteredFullNames.ToList()[SelectedIndex];
+            ///
+            SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
+            ///
+            _employeesView.Refresh();
+            PopupIsOpen = false;
+        }
+        //private void InitializeView(ObservableCollection<Models.Employee> employees)
+        //{
+        //    _employeesView = CollectionViewSource.GetDefaultView(employees);
+        //    _employeesView.GroupDescriptions.Add(new PropertyGroupDescription("Department"));
+        //    EmployeesView.Filter = i => String.IsNullOrEmpty(SelectedItem) ? true : ((Models.Employee)i).FullName.Contains(SelectedItem)
+        //    || ((Models.Employee)i).Title.Contains(SelectedItem) || ((Models.Employee)i).Department.Contains(SelectedItem);
+        //    EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
+        //    EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+        //    _employeesView.Refresh();
+
+        //}
+    }
+}

@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace PhoneBook.Windows
+{
+    /// <summary>
+    /// Логика взаимодействия для DBConnectionWindow.xaml
+    /// </summary>
+    public partial class DBConnectionWindow : Window
+    {
+        public DBConnectionWindow()
+        {
+            InitializeComponent();
+            var dataContext = new ViewModels.DBConnectionViewModel();
+            DataContext = dataContext;
+            dataContext.OnRequestClose += (s, e) => this.Close();
+        }
+    }
+}
