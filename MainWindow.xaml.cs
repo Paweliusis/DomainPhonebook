@@ -24,6 +24,7 @@ namespace PhoneBook
         public MainWindow()
         {
             InitializeComponent();
+            this.Height = System.Windows.SystemParameters.PrimaryScreenHeight * 0.9;
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             var dataContext = new ViewModels.MainWindowViewModel();
             DataContext = dataContext;

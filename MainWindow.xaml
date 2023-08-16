@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:PhoneBook"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" MinHeight="450"
+        Title="Телефонный справочник" MinHeight="450" WindowStartupLocation="CenterScreen"
         MinWidth="1200" MaxWidth="1200">
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
