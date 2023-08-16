@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace PhoneBook.Models
 {
-    /*public*/public class Employee : IEquatable<Employee> /*: INotifyPropertyChanged*/
+    /*public*/public class Employee : IEquatable<Employee>, INotifyPropertyChanged
     {
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //public void OnPropertyChanged([CallerMemberName]string prop = "")
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        //}
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
 
         private int _id;
         private string _fullName;
@@ -32,6 +32,7 @@ namespace PhoneBook.Models
             set
             {
                 _id = value;
+                OnPropertyChanged();
             }
         }
         public string FullName
@@ -40,7 +41,7 @@ namespace PhoneBook.Models
             set
             {
                 _fullName = value;
-                ////OnPropertyChanged("FullName");
+                OnPropertyChanged();
             }
         }
         public string Department
@@ -49,7 +50,7 @@ namespace PhoneBook.Models
             set
             {
                 _department = value;
-                //OnPropertyChanged("Department");
+                OnPropertyChanged();
             }
         }
         public string Title
@@ -58,7 +59,7 @@ namespace PhoneBook.Models
             set
             {
                 _title = value;
-                //OnPropertyChanged("Title");
+                OnPropertyChanged();
             }
         }
         public string IpPhoneNumber
@@ -67,7 +68,7 @@ namespace PhoneBook.Models
             set
             {
                 _ipPhoneNumber = value;
-                //OnPropertyChanged("IpPhoneNumber");
+                OnPropertyChanged();
             }
         }
         public string TelephoneNumber
@@ -76,7 +77,7 @@ namespace PhoneBook.Models
             set
             {
                 _telephoneNumber = value;
-                ////OnPropertyChanged("TelephoneNumber");
+                OnPropertyChanged();
             }
         }
         public string Mail
@@ -85,7 +86,7 @@ namespace PhoneBook.Models
             set
             {
                 _mail = value;
-                //OnPropertyChanged("Mail");
+                OnPropertyChanged();
             }
         }
         public string OfficeNumber
@@ -94,6 +95,7 @@ namespace PhoneBook.Models
             set
             {
                 _officeNumber = value;
+                OnPropertyChanged();
             }
         }
         public string City
@@ -102,7 +104,7 @@ namespace PhoneBook.Models
             set
             {
                 _city = value;
-                //OnPropertyChanged("City");
+                OnPropertyChanged();
             }
         }
         public string Street
@@ -111,7 +113,7 @@ namespace PhoneBook.Models
             set
             {
                 _street = value;
-                //OnPropertyChanged("Street");
+                OnPropertyChanged();
             }
         }
         public bool Equals(Employee other)

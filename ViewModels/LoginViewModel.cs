@@ -45,16 +45,16 @@ namespace PhoneBook.ViewModels
         }
         private void ConfirmLogin(object state)
         {
-            if (!String.IsNullOrEmpty(LoginString))
-            {
+            //if (!String.IsNullOrEmpty(LoginString))
+            //{
                 if (Classes.Validating.ValidateLogIn(LoginString, SecurePassword))
                 {
                     _authenticated = true;
                     OnRequestClose(this, new EventArgs());
                 }
                 else { MessageBox.Show("Неверно введено имя пользователя или пароль", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Warning); }
-            }
-            else { MessageBox.Show("Пожалуйста введите имя пользователя", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error); }
+            //}
+            //else { MessageBox.Show("Пожалуйста введите имя пользователя", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private bool _authenticated;

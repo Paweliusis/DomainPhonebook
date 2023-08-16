@@ -122,6 +122,7 @@
     <Compile Include="Classes\Command.cs" />
     <Compile Include="Classes\Encoding.cs" />
     <Compile Include="Classes\Exporting.cs" />
+    <Compile Include="Classes\ObservableCollectionExtensions.cs" />
     <Compile Include="Classes\Reader.cs" />
     <Compile Include="Classes\SyncBDWithAD.cs" />
     <Compile Include="Classes\Validating.cs" />

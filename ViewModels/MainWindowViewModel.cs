@@ -9,6 +9,7 @@ using PhoneBook.Classes;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
+using System.Threading;
 
 namespace PhoneBook.ViewModels
 {
@@ -20,6 +21,7 @@ namespace PhoneBook.ViewModels
             if (PropertyChanged != null)
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+        BackgroundWorker worker;
         public MainWindowViewModel()
         {
             SelectedIndex = -1;
@@ -36,8 +38,45 @@ namespace PhoneBook.ViewModels
             EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
             EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
             this._exportPhonebookCommand = new Classes.Command(this.ExportPhonebook);
+            worker = new BackgroundWorker();
+            worker.DoWork += new DoWorkEventHandler(Worker_DoWork);
+            worker.RunWorkerAsync();
         }
 
+        private void Worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (true)
+            {
+                Thread.Sleep(10000);
+                App.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                Refresh()));
+            }
+        }
+
+        private void Refresh()
+        {
+            try
+            {
+                var updatedEmployees = Classes.DBConnection.SelectEmployeesFromDB();
+                var empolyeeMatcher = new Func<Models.Employee, Models.Employee, bool>(
+                    (target, update) => target.Id == update.Id);
+                var employeeUpdater = new Action<Models.Employee, Models.Employee>((target, update) =>
+                {
+                    target.Id = update.Id;
+                    target.City = update.City;
+                    target.Department = update.Department;
+                    target.FullName = update.FullName;
+                    target.IpPhoneNumber = update.IpPhoneNumber;
+                    target.Mail = update.Mail;
+                    target.OfficeNumber = update.OfficeNumber;
+                    target.Street = update.Street;
+                    target.TelephoneNumber = update.TelephoneNumber;
+                    target.Title = update.Title;
+                });
+                Employees.UpdateItems(updatedEmployees, empolyeeMatcher, employeeUpdater);
+            }
+            catch (Exception e) { MessageBox.Show($"Проблема с обновлением данных - {e.Message}"); }
+        }
         private ICollectionView _employeesView;
         public ICollectionView EmployeesView
         {
@@ -130,6 +169,7 @@ namespace PhoneBook.ViewModels
                 ////if (!String.IsNullOrEmpty(value)) { PopupIsOpen = true; }
                 //if (!(FilteredFullNames == null) && FilteredFullNames.Count() > 0) { PopupIsOpen = true; }
                 //else { PopupIsOpen = false; }
+                if (String.IsNullOrEmpty(value)) { SelectedItem = null; SelectedIndex = -1; EmployeesView.Refresh(); }
                 OnPropertyChanged("SearchString");
                 OnPropertyChanged("FilteredFullNames");
             }
@@ -248,12 +288,15 @@ namespace PhoneBook.ViewModels
         }
         private void KeyReturnBinding(object state)
         {
-            SearchString = FilteredFullNames.ToList()[SelectedIndex];
-            ///
-            SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
-            ///
-            _employeesView.Refresh();
-            PopupIsOpen = false;
+            if (FilteredFullNames != null && SelectedIndex != -1)
+            {
+                SearchString = FilteredFullNames.ToList()[SelectedIndex];
+                ///
+                SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
+                ///
+                _employeesView.Refresh();
+                PopupIsOpen = false;
+            }
         }
 
         private readonly Classes.Command _previewMouseUpEventCommand;

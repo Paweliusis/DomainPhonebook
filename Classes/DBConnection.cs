@@ -277,6 +277,9 @@ namespace PhoneBook.Classes
                     while (reader.Read())
                     {
                         Models.Employee employee = new Models.Employee();
+                        ///
+                        employee.Id = int.Parse(reader["EmployeeID"].ToString());
+                        ///
                         employee.FullName = reader["FullName"].ToString();
                         employee.Department = reader["Department"].ToString();
                         employee.Title = reader["Title"].ToString();
