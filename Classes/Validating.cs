@@ -12,16 +12,29 @@ namespace PhoneBook.Classes
     {
         public static bool ValidateLogIn(string login, SecureString password)
         {
-            //if (DBConnection.CheckUsernameInDB(login, Encoding.CreateHashFromSecureString(password))) { return true; }
-            //else { return false; }
-            if (String.IsNullOrEmpty(login)) { MessageBox.Show("Пожалуйста введите имя пользователя", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error); }
-            if (password.Length == 0) { MessageBox.Show("Пожалуйста введите пароль", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error); }
-            if (!String.IsNullOrEmpty(login) && password.Length > 0)
+            try
             {
-                if (DBConnection.CheckUsernameInDB(login, Encoding.CreateHashFromSecureString(password))) { return true; }
-                else { return false; }
+
+
+                //if (DBConnection.CheckUsernameInDB(login, Encoding.CreateHashFromSecureString(password))) { return true; }
+                //else { return false; }
+                if (String.IsNullOrEmpty(login)) { MessageBox.Show("Пожалуйста введите имя пользователя", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error); }
+                if (!String.IsNullOrEmpty(login) && password.Length > 0)
+                {
+                    if (DBConnection.CheckUsernameInDB(login, Encoding.CreateHashFromSecureString(password))) { return true; }
+                    else 
+                    {
+                        MessageBox.Show("Неверно введено имя пользователя или пароль", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return false; 
+                    }
+                }
+                return false;
             }
-            return false;
+            catch (Exception e)
+            {
+                MessageBox.Show("Пожалуйста введите пароль", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
         public static bool ValidateLogIn(string login)
         {

@@ -187,10 +187,12 @@ namespace PhoneBook.ViewModels
             {
                 if (Employees != null && !String.IsNullOrEmpty(SearchString))
                 {
-                    if (_fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())).Count() > 0)
+                    //if (_fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())).Count() > 0)
+                    if (_fullNames.Where(x => x.ToUpper().Contains(SearchString.ToUpper())).Count() > 0)
                     {
                         PopupIsOpen = true;
-                        return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper()));
+                        //return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper()));
+                        return _fullNames.Where(x => x.ToUpper().Contains(SearchString.ToUpper()));
                     }
                 }
                 PopupIsOpen = false;
