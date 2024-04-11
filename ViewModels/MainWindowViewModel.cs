@@ -10,6 +10,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Threading;
+using ModernWpf.Controls;
 
 namespace PhoneBook.ViewModels
 {
@@ -24,17 +25,22 @@ namespace PhoneBook.ViewModels
         BackgroundWorker worker;
         public MainWindowViewModel()
         {
-            SelectedIndex = -1;
+            //SelectedIndex = -1;
             this._openSettingsWindowCommand = new Classes.Command(this.OpenSettingsWindow);
-            this._keyDownBindingCommand = new Classes.Command(this.KeyDownBinding);
-            this._keyUpBindingCommand = new Classes.Command(this.KeyUpBinding);
-            this._keyReturnBindingCommand = new Classes.Command(this.KeyReturnBinding);
-            this._previewMouseUpEventCommand = new Classes.Command(this.PreviewMouseUpEvent);
+            //this._keyDownBindingCommand = new Classes.Command(this.KeyDownBinding);
+            //this._keyUpBindingCommand = new Classes.Command(this.KeyUpBinding);
+            //this._keyReturnBindingCommand = new Classes.Command(this.KeyReturnBinding);
+            //this._previewMouseUpEventCommand = new Classes.Command(this.PreviewMouseUpEvent);
             Employees = DBConnection.SelectEmployeesFromDB();
+
+            //UpdateText = false;
+            FilteredEmployees = _fullNames;
+            this._submitSearchCommand = new Classes.Command(this.SubmitSearch);
+
             _employeesView = CollectionViewSource.GetDefaultView(Employees);
             _employeesView.GroupDescriptions.Add(new PropertyGroupDescription("Department"));
-            EmployeesView.Filter = i => String.IsNullOrEmpty(SelectedItem) ? true : ((Models.Employee)i).FullName.Contains(SelectedItem)
-            || ((Models.Employee)i).Title.Contains(SelectedItem) || ((Models.Employee)i).Department.Contains(SelectedItem);
+            //EmployeesView.Filter = i => String.IsNullOrEmpty(SelectedItem) ? true : ((Models.Employee)i).FullName.Contains(SelectedItem)
+            //|| ((Models.Employee)i).Title.Contains(SelectedItem) || ((Models.Employee)i).Department.Contains(SelectedItem);
             EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
             EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
             this._exportPhonebookCommand = new Classes.Command(this.ExportPhonebook);
@@ -75,7 +81,7 @@ namespace PhoneBook.ViewModels
                 });
                 Employees.UpdateItems(updatedEmployees, empolyeeMatcher, employeeUpdater);
             }
-            catch (Exception e) { MessageBox.Show($"Проблема с обновлением данных - {e.Message}"); }
+            catch (Exception e) { }
         }
         private ICollectionView _employeesView;
         public ICollectionView EmployeesView
@@ -116,25 +122,25 @@ namespace PhoneBook.ViewModels
         //
         //
 
-        private readonly Classes.Command _keyDownBindingCommand;
-        public Classes.Command KeyDownBindingCommand
-        {
-            get { return this._keyDownBindingCommand; }
-        }
-        private void KeyDownBinding(object state)
-        {
-            if (FilteredFullNames != null && SelectedIndex < FilteredFullNames.Count() - 1)
-            {
-                SelectedIndex = SelectedIndex + 1;
-            }
-            else
-            {
-                if (FilteredFullNames != null && SelectedIndex == FilteredFullNames.Count() - 1)
-                {
-                    SelectedIndex = 0;
-                }
-            }
-        }
+        //private readonly Classes.Command _keyDownBindingCommand;
+        //public Classes.Command KeyDownBindingCommand
+        //{
+        //    get { return this._keyDownBindingCommand; }
+        //}
+        //private void KeyDownBinding(object state)
+        //{
+        //    if (FilteredFullNames != null && SelectedIndex < FilteredFullNames.Count() - 1)
+        //    {
+        //        SelectedIndex = SelectedIndex + 1;
+        //    }
+        //    else
+        //    {
+        //        if (FilteredFullNames != null && SelectedIndex == FilteredFullNames.Count() - 1)
+        //        {
+        //            SelectedIndex = 0;
+        //        }
+        //    }
+        //}
 
         //
         //
@@ -158,47 +164,47 @@ namespace PhoneBook.ViewModels
         }
         private List<string> _fullNames { get; set; }
 
-        private string _searchString;
-        public string SearchString
-        {
-            get { return _searchString; }
-            set
-            {
-                _searchString = value;
-                ////PopupIsOpen = true;
-                ////if (!String.IsNullOrEmpty(value)) { PopupIsOpen = true; }
-                //if (!(FilteredFullNames == null) && FilteredFullNames.Count() > 0) { PopupIsOpen = true; }
-                //else { PopupIsOpen = false; }
-                if (String.IsNullOrEmpty(value)) { SelectedItem = null; SelectedIndex = -1; EmployeesView.Refresh(); }
-                OnPropertyChanged("SearchString");
-                OnPropertyChanged("FilteredFullNames");
-            }
-        }
-        public IEnumerable<string> FilteredFullNames
-        {
-            //get
-            //{
-            //    if (SearchString == null) return null;
-            //    //if (!String.IsNullOrEmpty(SelectedItem)) return null;
-            //    if (Employees != null && !String.IsNullOrEmpty(SearchString)) { /*PopupIsOpen = true;*/ return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())); }
-            //    else { return null; }
-            //}
-            get
-            {
-                if (Employees != null && !String.IsNullOrEmpty(SearchString))
-                {
-                    //if (_fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())).Count() > 0)
-                    if (_fullNames.Where(x => x.ToUpper().Contains(SearchString.ToUpper())).Count() > 0)
-                    {
-                        PopupIsOpen = true;
-                        //return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper()));
-                        return _fullNames.Where(x => x.ToUpper().Contains(SearchString.ToUpper()));
-                    }
-                }
-                PopupIsOpen = false;
-                return null;
-            }
-        }
+        //private string _searchString;
+        //public string SearchString
+        //{
+        //    get { return _searchString; }
+        //    set
+        //    {
+        //        _searchString = value;
+        //        ////PopupIsOpen = true;
+        //        ////if (!String.IsNullOrEmpty(value)) { PopupIsOpen = true; }
+        //        //if (!(FilteredFullNames == null) && FilteredFullNames.Count() > 0) { PopupIsOpen = true; }
+        //        //else { PopupIsOpen = false; }
+        //        if (String.IsNullOrEmpty(value)) { SelectedItem = null; SelectedIndex = -1; EmployeesView.Refresh(); }
+        //        OnPropertyChanged("SearchString");
+        //        OnPropertyChanged("FilteredFullNames");
+        //    }
+        //}
+        //public IEnumerable<string> FilteredFullNames
+        //{
+        //    //get
+        //    //{
+        //    //    if (SearchString == null) return null;
+        //    //    //if (!String.IsNullOrEmpty(SelectedItem)) return null;
+        //    //    if (Employees != null && !String.IsNullOrEmpty(SearchString)) { /*PopupIsOpen = true;*/ return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())); }
+        //    //    else { return null; }
+        //    //}
+        //    get
+        //    {
+        //        if (Employees != null && !String.IsNullOrEmpty(SearchString))
+        //        {
+        //            //if (_fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper())).Count() > 0)
+        //            if (_fullNames.Where(x => x.ToUpper().Contains(SearchString.ToUpper())).Count() > 0)
+        //            {
+        //                PopupIsOpen = true;
+        //                //return _fullNames.Where(x => x.ToUpper().StartsWith(SearchString.ToUpper()));
+        //                return _fullNames.Where(x => x.ToUpper().Contains(SearchString.ToUpper()));
+        //            }
+        //        }
+        //        PopupIsOpen = false;
+        //        return null;
+        //    }
+        //}
         //private string _selectedItem;
         //public string SelectedItem
         //{
@@ -223,21 +229,21 @@ namespace PhoneBook.ViewModels
         //        //OnPropertyChanged("SelectedItem");
         //    }
         //}
-        private string SelectedItem;
+        //private string SelectedItem;
 
-        private bool _popupIsOpen;
-        public bool PopupIsOpen
-        {
-            get
-            {
-                return _popupIsOpen;
-            }
-            set
-            {
-                _popupIsOpen = value;
-                OnPropertyChanged("PopupIsOpen");
-            }
-        }
+        //private bool _popupIsOpen;
+        //public bool PopupIsOpen
+        //{
+        //    get
+        //    {
+        //        return _popupIsOpen;
+        //    }
+        //    set
+        //    {
+        //        _popupIsOpen = value;
+        //        OnPropertyChanged("PopupIsOpen");
+        //    }
+        //}
 
         private readonly Classes.Command _exportPhonebookCommand;
         public Classes.Command ExportPhonebookCommand
@@ -252,69 +258,69 @@ namespace PhoneBook.ViewModels
             Export.ShowDialog();
         }
 
-        private int _selectedIndex;
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set
-            {
-                _selectedIndex = value;
-                OnPropertyChanged("SelectedIndex");
-            }
-        }
+        //private int _selectedIndex;
+        //public int SelectedIndex
+        //{
+        //    get { return _selectedIndex; }
+        //    set
+        //    {
+        //        _selectedIndex = value;
+        //        OnPropertyChanged("SelectedIndex");
+        //    }
+        //}
 
-        private readonly Classes.Command _keyUpBindingCommand;
-        public Classes.Command KeyUpBindingCommand
-        {
-            get { return this._keyUpBindingCommand; }
-        }
-        private void KeyUpBinding(object state)
-        {
-            if (SelectedIndex != 0 && FilteredFullNames != null && SelectedIndex < FilteredFullNames.Count())
-            {
-                SelectedIndex = SelectedIndex - 1;
-            }
-            else
-            {
-                if (FilteredFullNames != null && SelectedIndex == 0)
-                {
-                    SelectedIndex = FilteredFullNames.Count() - 1;
-                }
-            }
-        }
+        //private readonly Classes.Command _keyUpBindingCommand;
+        //public Classes.Command KeyUpBindingCommand
+        //{
+        //    get { return this._keyUpBindingCommand; }
+        //}
+        //private void KeyUpBinding(object state)
+        //{
+        //    if (SelectedIndex != 0 && FilteredFullNames != null && SelectedIndex < FilteredFullNames.Count())
+        //    {
+        //        SelectedIndex = SelectedIndex - 1;
+        //    }
+        //    else
+        //    {
+        //        if (FilteredFullNames != null && SelectedIndex == 0)
+        //        {
+        //            SelectedIndex = FilteredFullNames.Count() - 1;
+        //        }
+        //    }
+        //}
 
-        private readonly Classes.Command _keyReturnBindingCommand;
-        public Classes.Command KeyReturnBindingCommand
-        {
-            get { return this._keyReturnBindingCommand; }
-        }
-        private void KeyReturnBinding(object state)
-        {
-            if (FilteredFullNames != null && SelectedIndex != -1)
-            {
-                SearchString = FilteredFullNames.ToList()[SelectedIndex];
-                ///
-                SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
-                ///
-                _employeesView.Refresh();
-                PopupIsOpen = false;
-            }
-        }
+        //private readonly Classes.Command _keyReturnBindingCommand;
+        //public Classes.Command KeyReturnBindingCommand
+        //{
+        //    get { return this._keyReturnBindingCommand; }
+        //}
+        //private void KeyReturnBinding(object state)
+        //{
+        //    if (FilteredFullNames != null && SelectedIndex != -1)
+        //    {
+        //        SearchString = FilteredFullNames.ToList()[SelectedIndex];
+        //        ///
+        //        SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
+        //        ///
+        //        _employeesView.Refresh();
+        //        PopupIsOpen = false;
+        //    }
+        //}
 
-        private readonly Classes.Command _previewMouseUpEventCommand;
-        public Classes.Command PreviewMouseUpEventCommand
-        {
-            get { return this._previewMouseUpEventCommand; }
-        }
-        private void PreviewMouseUpEvent(object state)
-        {
-            SearchString = FilteredFullNames.ToList()[SelectedIndex];
-            ///
-            SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
-            ///
-            _employeesView.Refresh();
-            PopupIsOpen = false;
-        }
+        //private readonly Classes.Command _previewMouseUpEventCommand;
+        //public Classes.Command PreviewMouseUpEventCommand
+        //{
+        //    get { return this._previewMouseUpEventCommand; }
+        //}
+        //private void PreviewMouseUpEvent(object state)
+        //{
+        //    SearchString = FilteredFullNames.ToList()[SelectedIndex];
+        //    ///
+        //    SelectedItem = FilteredFullNames.ToList()[SelectedIndex];
+        //    ///
+        //    _employeesView.Refresh();
+        //    PopupIsOpen = false;
+        //}
         //private void InitializeView(ObservableCollection<Models.Employee> employees)
         //{
         //    _employeesView = CollectionViewSource.GetDefaultView(employees);
@@ -326,5 +332,59 @@ namespace PhoneBook.ViewModels
         //    _employeesView.Refresh();
 
         //}
+        //private bool _updateText;
+        //public bool UpdateText
+        //{
+        //    get { return _updateText; }
+        //    set
+        //    {
+        //        _updateText = value;
+        //        OnPropertyChanged("UpdateText");
+        //    }
+        //}
+
+        private string _searchString;
+        public string SearchString
+        {
+            get { return _searchString; }
+            set
+            {
+                _searchString = value;
+                OnPropertyChanged("SearchString");
+            }
+        }
+        private List<string> _filteredEmployees;
+        public List<string> FilteredEmployees
+        {
+            get { return _filteredEmployees; }
+            set
+            {
+                _filteredEmployees = value;
+                OnPropertyChanged("FilteredEmployees");
+            }
+        }
+
+        private readonly Classes.Command _submitSearchCommand;
+        public Classes.Command SubmitSearchCommand
+        {
+            get { return _submitSearchCommand; }
+        }
+        private void SubmitSearch(object state)
+        {
+            EmployeesView.Filter = i => String.IsNullOrEmpty(SearchString) ? true : ((Models.Employee)i).FullName.ToLower().Contains(SearchString.ToLower())
+            || ((Models.Employee)i).Title.ToLower().Contains(SearchString.ToLower()) || ((Models.Employee)i).Department.ToLower().Contains(SearchString.ToLower());
+            _employeesView.Refresh();
+        }
+
+        public void TextChangedMethod(object sender, AutoSuggestBoxTextChangedEventArgs a)
+        {
+            if (a.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                FilteredEmployees = _fullNames;
+                var result = FilteredEmployees.Where(x => x.ToLower().Contains(SearchString.ToLower())).ToList();
+                if (result.Count == 0) { FilteredEmployees = new List<string> { "Ничего не найдено" }; }
+                else FilteredEmployees = result;
+            }
+        }
     }
 }

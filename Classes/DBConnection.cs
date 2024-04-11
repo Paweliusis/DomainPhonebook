@@ -13,28 +13,7 @@ namespace PhoneBook.Classes
 {
     class DBConnection
     {
-        //    static readonly string connectionString = "server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;" +
-        //"port=3306;database=Phonebook";
-        //private Settings PBParams = new Settings();
-        public static string connectionString
-        {
-            get 
-            {
-                var PBSettings = new Settings();
-                //if (string.IsNullOrEmpty(PBSettings.DBConnectionString)) /*String.IsNullOrEmpty(PBSettings.testParam))*/
-                //{
-                //    return "server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;port=3306;database=Phonebook";
-                //}
-                //else { return PBSettings.DBConnectionString; /*PBSettings.testParam;*/ }
-                ////return "server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;port=3306;database=Phonebook";
-                //if (String.IsNullOrEmpty(PBSettings.DBConnectionString))
-                //{
-                //    return Classes.Reader.ReadConnectionString();
-                //}
-                //else { return PBSettings.DBConnectionString; }
-                return Classes.Reader.ReadConnectionString();
-            }
-        }
+        static readonly string connectionString = "example";
 
         public static bool CheckUsernameInDB(string username, string password)
         {

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:PhoneBook"
         mc:Ignorable="d"
         Title="Телефонный справочник" MinHeight="450" WindowStartupLocation="CenterScreen"
@@ -15,7 +16,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="46"/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Label>Телефонный справочник</Label>
@@ -29,45 +30,28 @@
                 Command="{Binding OpenSettingsWindowCommand}">
                 Настройки</Button>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" FocusManager.IsFocusScope="True">
-            <TextBox MinWidth="700" x:Name="SearchBox" Style="{DynamicResource SearchBox}"
-                 Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Command="{Binding KeyDownBindingCommand}" Key="Down"/>
-                    <KeyBinding Command="{Binding KeyUpBindingCommand}" Key="Up"/>
-                    <KeyBinding Command="{Binding KeyReturnBindingCommand}" Key="Return"/>
-                </TextBox.InputBindings>
-            </TextBox>
-            <Popup Width="{Binding RelativeSource={RelativeSource Self},
-                          Path=PlacementTarget.ActualWidth}" MaxHeight="500"
-                   Placement="Bottom"
-                   PlacementTarget="{Binding ElementName=SearchBox}"
-                   PopupAnimation="Fade"
-                   IsOpen="{Binding PopupIsOpen}">
-                <ListBox x:Name="FilteredNames" ItemsSource="{Binding FilteredFullNames, NotifyOnTargetUpdated=True}"
-                         Style="{DynamicResource SearchListBox}"
-                         ItemContainerStyle="{DynamicResource SearchListBoxItems}"
-                         SelectionMode="Single"
-                         SelectedIndex="{Binding SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         IsSynchronizedWithCurrentItem="False">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="{Binding}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="PreviewMouseUp">
-                            <i:InvokeCommandAction Command="{Binding PreviewMouseUpEventCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ListBox>
-            </Popup>
-        </StackPanel>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,4">
+            <ui:AutoSuggestBox PlaceholderText="ФИО сотрудника, название отдела или должность" 
+                               QueryIcon="Find"
+                               BorderBrush="Black"
+                               BorderThickness="2"
+                               CornerRadius="0"
+                               Text="{Binding SearchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                               UpdateTextOnSelect="True"
+                               ItemsSource="{Binding FilteredEmployees}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="TextChanged">
+                        <i:CallMethodAction
+                            TargetObject="{Binding}"
+                            MethodName="TextChangedMethod"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="QuerySubmitted">
+                        <i:InvokeCommandAction
+                                Command="{Binding SubmitSearchCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ui:AutoSuggestBox>
+        </Grid>
         <ListBox Grid.Row="2" Grid.ColumnSpan="2"
                  Style="{DynamicResource EmployeesView}"
                  ItemContainerStyle="{DynamicResource EmployeesViewItemsStyle}"
@@ -107,15 +91,6 @@
                                 <TextBlock Grid.Column="2" Text="{Binding IpPhoneNumber}" Width="120"
                                            TextWrapping="Wrap" HorizontalAlignment="Left"/>
                             </Grid>
-                            <!--<TextBlock>
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0} {1} {2}">
-                                        <Binding Path="FullName"/>
-                                        <Binding Path="Department"/>
-                                        <Binding Path="IpPhoneNumber"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>-->
                         </Expander.Header>
                         <Grid Margin="8">
                             <Grid.ColumnDefinitions>
