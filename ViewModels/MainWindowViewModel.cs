@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Threading;
 using ModernWpf.Controls;
+using System.Collections;
 
 namespace PhoneBook.ViewModels
 {
@@ -41,8 +42,10 @@ namespace PhoneBook.ViewModels
             _employeesView.GroupDescriptions.Add(new PropertyGroupDescription("Department"));
             //EmployeesView.Filter = i => String.IsNullOrEmpty(SelectedItem) ? true : ((Models.Employee)i).FullName.Contains(SelectedItem)
             //|| ((Models.Employee)i).Title.Contains(SelectedItem) || ((Models.Employee)i).Department.Contains(SelectedItem);
-            EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
-            EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+
+            //EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
+            //EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+
             this._exportPhonebookCommand = new Classes.Command(this.ExportPhonebook);
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(Worker_DoWork);
@@ -384,6 +387,62 @@ namespace PhoneBook.ViewModels
                 var result = FilteredEmployees.Where(x => x.ToLower().Contains(SearchString.ToLower())).ToList();
                 if (result.Count == 0) { FilteredEmployees = new List<string> { "Ничего не найдено" }; }
                 else FilteredEmployees = result;
+            }
+        }
+
+        private string _selectedSorting;
+        public string SelectedSorting
+        {
+            get { return _selectedSorting; }
+            set
+            {
+                _selectedSorting = value;
+                OnPropertyChanged("SelectedFilter");
+                Test();
+            }
+        }
+        private void Test()
+        {
+            EmployeesView.SortDescriptions.Clear();
+            EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
+            if (SelectedSorting == "ФИО по возрастанию")
+            {
+                EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+            }
+            if (SelectedSorting == "ФИО по убыванию")
+            {
+                EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Descending));
+            }
+            if (SelectedSorting == "Должность по возрастанию")
+            {
+                //ListCollectionView ListEmployeesView = EmployeesView as ListCollectionView;
+                //ListEmployeesView.CustomSort = new EmployeeTitleCompare();
+                EmployeesView.SortDescriptions.Add(new SortDescription("HierarchyId", ListSortDirection.Ascending));
+            }
+            if (SelectedSorting == "Должность по убыванию")
+            {
+                EmployeesView.SortDescriptions.Add(new SortDescription("HierarchyId", ListSortDirection.Descending));
+                //ListCollectionView ListEmployeesView = EmployeesView as ListCollectionView;
+                //ListEmployeesView.CustomSort = new EmployeeTitleCompareDescending();
+            }
+        }
+
+        private class EmployeeTitleCompare : IComparer
+        {
+            public int Compare(object a, object b)
+            {
+                Models.Employee temp1 = a as Models.Employee;
+                Models.Employee temp2 = b as Models.Employee;
+                return DBConnection.SelectTitleWeight(temp1.Title).CompareTo(DBConnection.SelectTitleWeight(temp2.Title));
+            }
+        }
+        private class EmployeeTitleCompareDescending : IComparer
+        {
+            public int Compare(object a, object b)
+            {
+                Models.Employee temp1 = a as Models.Employee;
+                Models.Employee temp2 = b as Models.Employee;
+                return -DBConnection.SelectTitleWeight(temp1.Title).CompareTo(DBConnection.SelectTitleWeight(temp2.Title));
             }
         }
     }

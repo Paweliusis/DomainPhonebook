@@ -116,6 +116,10 @@ namespace PhoneBook.Models
                 OnPropertyChanged();
             }
         }
+        public int HierarchyId
+        {
+            get { return Classes.DBConnection.SelectTitleWeight(Title); }
+        }
         public bool Equals(Employee other)
         {
             if (other is null)

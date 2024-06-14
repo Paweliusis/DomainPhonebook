@@ -1,0 +1,41 @@
+﻿<Window x:Class="PhoneBook.Windows.Test"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:PhoneBook.Windows"
+        mc:Ignorable="d"
+        Title="Телефонный справочник" MinHeight="450" WindowStartupLocation="CenterScreen"
+        MinWidth="1200" MaxWidth="1200">
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="46"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label>Телефонный справочник</Label>
+        <Button Grid.Column="1" HorizontalAlignment="Right" 
+                Width="80" Height="40">Настройки</Button>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Width="80" Height="40" Margin="0,0,8,0">Экспорт</Button>
+            
+            <ui:AutoSuggestBox Width="240" Height="40" PlaceholderText="Поиск"
+                               Margin="0,3,0,0"
+                               QueryIcon="Find"
+                               BorderBrush="Black"
+                               BorderThickness="2"
+                               CornerRadius="0">
+            </ui:AutoSuggestBox>
+        </StackPanel>
+        <ListView Grid.Row="2" Grid.ColumnSpan="2"
+                  Style="{DynamicResource EmployeesView}">
+            
+        </ListView>
+    </Grid>
+</Window>

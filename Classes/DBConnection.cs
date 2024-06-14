@@ -13,7 +13,8 @@ namespace PhoneBook.Classes
 {
     class DBConnection
     {
-        static readonly string connectionString = "example";
+        static readonly string connectionString = "server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;" +
+    "port=3306;database=Phonebook";
 
         public static bool CheckUsernameInDB(string username, string password)
         {
@@ -313,6 +314,37 @@ namespace PhoneBook.Classes
                     MessageBox.Show($"{e.Message}");
                 }
             }
+        }
+        public static int SelectTitleWeight(string jobTitle)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                try
+                {
+                    string commandText = "SELECT JobSortingWeight FROM JobTitles WHERE JobName = '" + jobTitle + "';";
+                    MySqlCommand cmd = new MySqlCommand(commandText, connection);
+                    //var temp = cmd.ExecuteScalar().ToString();
+                    //if (String.IsNullOrEmpty(cmd.ExecuteScalar().ToString())) { return 0; }
+                    //else return 0;
+                    var qwe = cmd.ExecuteScalar();
+                    connection.Close();
+                    if (qwe == null) { return 0; }
+                    else { return int.Parse(qwe.ToString()); }
+                }
+                catch (Exception e)
+                {
+                    return 99;
+                }
+            }
+            //if (jobTitle == "Начальник отдела") { return 1; }
+            //if (jobTitle == "Заместитель начальника отдела") { return 2; }
+            //if (jobTitle == "Главный казначей") { return 3; }
+            //if (jobTitle == "Главный специалист-эксперт") { return 4; }
+            //if (jobTitle == "Ведущий специалист-эксперт") { return 5; }
+            //if (jobTitle == "Стариший специалист 1 разряда") { return 6; }
+            //if (jobTitle == "Специалист 1 разряда") { return 7; }
+            //return 99;
         }
         //public static void WriteSession(string username, string computername)
         //{

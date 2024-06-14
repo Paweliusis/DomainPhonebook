@@ -19,10 +19,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Label>Телефонный справочник</Label>
+        <Label Margin="4,0,0,0">Телефонный справочник</Label>
         <StackPanel Grid.Column="2" HorizontalAlignment="Right"
                     Orientation="Horizontal">
-            <Button Width="80" Height="40" Margin="0,0,2,0"
+            <Button Width="80" Height="40" Margin="0,0,4,0"
                     Command="{Binding ExportPhonebookCommand}">
                 Экспорт
             </Button>
@@ -30,8 +30,8 @@
                 Command="{Binding OpenSettingsWindowCommand}">
                 Настройки</Button>
         </StackPanel>
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,4">
-            <ui:AutoSuggestBox PlaceholderText="ФИО сотрудника, название отдела или должность" 
+        <ui:AutoSuggestBox Grid.Row="1" Margin="4,0,0,4"
+            PlaceholderText="Поиск сотрудника в списке" 
                                QueryIcon="Find"
                                BorderBrush="Black"
                                BorderThickness="2"
@@ -39,58 +39,76 @@
                                Text="{Binding SearchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                UpdateTextOnSelect="True"
                                ItemsSource="{Binding FilteredEmployees}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="TextChanged">
-                        <i:CallMethodAction
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="TextChanged">
+                    <i:CallMethodAction
                             TargetObject="{Binding}"
                             MethodName="TextChangedMethod"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="QuerySubmitted">
-                        <i:InvokeCommandAction
+                </i:EventTrigger>
+                <i:EventTrigger EventName="QuerySubmitted">
+                    <i:InvokeCommandAction
                                 Command="{Binding SubmitSearchCommand}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ui:AutoSuggestBox>
-        </Grid>
-        <ListBox Grid.Row="2" Grid.ColumnSpan="2"
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ui:AutoSuggestBox>
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal"
+                    Margin="4,0,0,0">
+            <TextBlock Text="Сортировка:" Margin="0,0,2,7" 
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI Semibold"
+                       FontSize="14"/>
+            <ComboBox MaxWidth="260" BorderThickness="0" Margin="0"
+                      Padding="2,0,0,0" VerticalContentAlignment="Center"
+                      IsSynchronizedWithCurrentItem="True" SelectedIndex="0" 
+                      Style="{DynamicResource ComboBoxStyle1}"
+                      Text="{Binding SelectedSorting, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Text="ФИО по возрастанию" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                <TextBlock Text="ФИО по убыванию" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                <TextBlock Text="Должность по возрастанию" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                <TextBlock Text="Должность по убыванию" FontSize="14" FontFamily="Segoe UI Semibold"/>
+            </ComboBox>
+        </StackPanel>
+        <ui:ListView Grid.Row="2" Grid.ColumnSpan="2"
                  Style="{DynamicResource EmployeesView}"
                  ItemContainerStyle="{DynamicResource EmployeesViewItemsStyle}"
                  ItemsSource="{Binding EmployeesView}"
-                 SelectionMode="Single">
-            <ListBox.GroupStyle>
+                 SelectionMode="Single"
+                 ui:ScrollViewerHelper.AutoHideScrollBars="True">
+            <ui:ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
                         <Style TargetType="{x:Type GroupItem}">
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander Header="{Binding Name}" Style="{DynamicResource GroupsExpander}">
-                                            <ItemsPresenter Margin="20,0,0,0" />
-                                        </Expander>
+                                        <StackPanel>
+                                            <Border BorderBrush="Black" BorderThickness="0,0,0,2">
+                                                <TextBlock Text="{Binding Name}" FontSize="24"
+                                                           FontFamily="Segoe UI Bold"/>
+                                            </Border>
+                                            <ItemsPresenter Margin="20,2,0,0" />
+                                        </StackPanel>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style>
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
-            </ListBox.GroupStyle>
-            <ListBox.ItemTemplate>
+            </ui:ListView.GroupStyle>
+            <ui:ListView.ItemTemplate>
                 <DataTemplate>
-                    <Expander Style="{DynamicResource EmployeesExpander}">
+                    <Expander>
                         <Expander.Header>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding FullName}" Width="400"
-                                           TextWrapping="Wrap" HorizontalAlignment="Left"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Title}" Width="540"
-                                           TextWrapping="Wrap" HorizontalAlignment="Left"/>
-                                <TextBlock Grid.Column="2" Text="{Binding IpPhoneNumber}" Width="120"
-                                           TextWrapping="Wrap" HorizontalAlignment="Left"/>
-                            </Grid>
+                            <DockPanel LastChildFill="True"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch">
+                                <TextBlock Text="{Binding FullName}" Padding="0,10,0,10"
+                                           TextWrapping="Wrap" Width="400"/>
+                                <TextBlock Text="{Binding Title}" Padding="0,10,0,10"
+                                           TextWrapping="Wrap" Width="540"/>
+                                <TextBlock Text="{Binding IpPhoneNumber}" Padding="0,10,0,10"
+                                           TextWrapping="Wrap"/>
+                            </DockPanel>
                         </Expander.Header>
                         <Grid Margin="8">
                             <Grid.ColumnDefinitions>
@@ -148,7 +166,7 @@
                         </Grid>
                     </Expander>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ui:ListView.ItemTemplate>
+        </ui:ListView>
     </Grid>
 </Window>
