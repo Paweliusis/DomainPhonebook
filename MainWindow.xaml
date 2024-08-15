@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         Title="Телефонный справочник" MinHeight="450" WindowStartupLocation="CenterScreen"
         MinWidth="1200" MaxWidth="1200">
+
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="320"/>
@@ -53,7 +54,7 @@
         </ui:AutoSuggestBox>
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal"
                     Margin="4,0,0,0">
-            <TextBlock Text="Сортировка:" Margin="0,0,2,7" 
+            <TextBlock Text="Сортировка:" Margin="0,0,4,7" 
                        VerticalAlignment="Center"
                        FontFamily="Segoe UI Semibold"
                        FontSize="14"/>
@@ -82,7 +83,8 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GroupItem}">
                                         <StackPanel>
-                                            <Border BorderBrush="Black" BorderThickness="0,0,0,2">
+                                            <Border BorderBrush="Black" BorderThickness="0,0,0,2"
+                                                    Margin="0,0,22,0">
                                                 <TextBlock Text="{Binding Name}" FontSize="24"
                                                            FontFamily="Segoe UI Bold"/>
                                             </Border>
@@ -103,65 +105,47 @@
                                     VerticalAlignment="Stretch"
                                     HorizontalAlignment="Stretch">
                                 <TextBlock Text="{Binding FullName}" Padding="0,10,0,10"
-                                           TextWrapping="Wrap" Width="400"/>
-                                <TextBlock Text="{Binding Title}" Padding="0,10,0,10"
+                                           TextWrapping="Wrap" Width="400"
+                                           Style="{DynamicResource OrdinaryTextBlock}"/>
+                                <TextBlock Text="{Binding Title}" Padding="0,10,0,10" Style="{DynamicResource OrdinaryTextBlock}"
                                            TextWrapping="Wrap" Width="540"/>
-                                <TextBlock Text="{Binding IpPhoneNumber}" Padding="0,10,0,10"
+                                <TextBlock Text="{Binding IpPhoneNumber}" Padding="0,10,0,10" Style="{DynamicResource OrdinaryTextBlock}"
                                            TextWrapping="Wrap"/>
                             </DockPanel>
                         </Expander.Header>
                         <Grid Margin="8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="160"/>
-                                <ColumnDefinition Width="180"/>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="ФИО:"
+                            <TextBlock Text="Внешний телефон:" TextWrapping="Wrap" Padding="14,0,4,8"
                                        Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding FullName}"
-                                       Style="{DynamicResource TextBlockInfo}"
-                                       TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="1" Text="Отдел:" 
-                                       Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Department}"
+                            <TextBlock Grid.Column="1" Text="{Binding TelephoneNumber}"
                                        Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="2" Text="Должность:" 
+                            <TextBlock Grid.Column="2" Text="Город:" Padding="0,0,4,4"
                                        Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Title}"
+                            <TextBlock Grid.Column="3" Text="{Binding City}"
                                        Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Column="2" Text="Внутренний телефон:" TextWrapping="Wrap" 
-                                       Style="{DynamicResource TextBlockLabel}"
-                                       Padding="0,0,0,10"/>
-                            <TextBlock Grid.Column="3" Text="{Binding IpPhoneNumber}"
-                                       Style="{DynamicResource TextBlockInfo}"/>
-                            <TextBlock Grid.Column="2" Grid.Row="1" Text="Внешний телефон:" TextWrapping="Wrap" 
+                            <TextBlock Grid.Column="4" Text="Улица:" Padding="0,0,4,4"
                                        Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding TelephoneNumber}"
+                            <TextBlock Grid.Column="5" Text="{Binding Street}"
                                        Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Column="2" Grid.Row="2" TextWrapping="Wrap" 
+                            <TextBlock Grid.Row="1" TextWrapping="Wrap" Padding="14,0,4,0"
                                        Text="Адрес электронной почты:" Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Mail}"
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Mail}"
                                        Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Column="4" Text="Город:" 
+                            <TextBlock Grid.Column="2" Grid.Row="1" Text="Кабинет:" Padding="0,0,4,0"
                                        Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Column="5" Text="{Binding City}"
-                                       Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Column="4" Grid.Row="1" Text="Улица:"
-                                       Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Column="5" Grid.Row="1" Text="{Binding Street}"
-                                       Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"
-                                       Padding="0,0,0,10"/>
-                            <TextBlock Grid.Column="4" Grid.Row="2" Text="Кабинет:"
-                                       Style="{DynamicResource TextBlockLabel}"/>
-                            <TextBlock Grid.Column="5" Grid.Row="2" Text="{Binding OfficeNumber}"
+                            <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding OfficeNumber}"
                                        Style="{DynamicResource TextBlockInfo}" TextWrapping="Wrap"/>
                         </Grid>
                     </Expander>

@@ -329,7 +329,7 @@ namespace PhoneBook.Classes
                     //else return 0;
                     var qwe = cmd.ExecuteScalar();
                     connection.Close();
-                    if (qwe == null) { return 0; }
+                    if (qwe == null) { return 99; }
                     else { return int.Parse(qwe.ToString()); }
                 }
                 catch (Exception e)
