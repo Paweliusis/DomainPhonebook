@@ -385,10 +385,23 @@ namespace PhoneBook.ViewModels
             {
                 FilteredEmployees = _fullNames;
                 var result = FilteredEmployees.Where(x => x.ToLower().Contains(SearchString.ToLower())).ToList();
+
+                //List<string> result = qwerty(SearchString);
+
                 if (result.Count == 0) { FilteredEmployees = new List<string> { "Ничего не найдено" }; }
                 else FilteredEmployees = result;
             }
         }
+
+        //private List<string> qwerty(string SearchString)
+        //{
+        //    List<string> result = new List<string> { };
+        //    foreach (var i in SearchString.Split(' '))
+        //    {
+        //        result.AddRange(FilteredEmployees.Where(x => x.ToLower().Contains(i.ToLower())));
+        //    }
+        //    return result;
+        //}
 
         private string _selectedSorting;
         public string SelectedSorting

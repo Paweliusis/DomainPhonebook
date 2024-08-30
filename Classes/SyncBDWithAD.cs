@@ -22,6 +22,11 @@ namespace PhoneBook.Classes
                     }
                     else
                     {
+
+                        //MessageBox.Show(employee.FullName);
+                        //MessageBox.Show(employee.Department);
+                        //MessageBox.Show(employee.Title);
+
                         DBConnection.InsertEmployeeInDB(employee);
                     }
                 });

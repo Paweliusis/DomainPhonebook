@@ -15,6 +15,8 @@ namespace PhoneBook.Classes
     {
         static readonly string connectionString = "server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;" +
     "port=3306;database=Phonebook";
+        //static readonly string connectionString = "server=10.69.163.3;user id=test;password=test;persistsecurityinfo=True;sslmode=None;" +
+        //"port=3306;database=phonebook123;CharSet=utf8";
 
         public static bool CheckUsernameInDB(string username, string password)
         {
@@ -117,7 +119,7 @@ namespace PhoneBook.Classes
                     MySqlCommand cmd = new MySqlCommand(excst, connection);
                     int isExist = int.Parse(cmd.ExecuteScalar().ToString());
                     if (isExist == 1) { return true; }
-                    else { return false; }
+                    else {return false; }
                 }
                 catch(Exception e)
                 {

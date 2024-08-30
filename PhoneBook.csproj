@@ -184,8 +184,6 @@
     <Content Include="ConnectionString.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="greybg.ico" />
-    <Resource Include="greybg.PNG" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML">
