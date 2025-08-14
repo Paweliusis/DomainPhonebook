@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PhoneBook.Windows"
         mc:Ignorable="d"
-        Title="Login" Height="300" Width="440" MinHeight="300" MinWidth="440" WindowStartupLocation="CenterOwner">
+        Title="Login" Height="300" Width="440" MinHeight="320" MinWidth="440" WindowStartupLocation="CenterOwner">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -14,15 +14,21 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Label>Авторизация</Label>
-        <TextBlock Grid.Row="1" TextWrapping="Wrap" Style="{DynamicResource OrdinaryTextBlock}" 
-                   Text="Для доступа к настройкам введите, пожалуйста, имя пользователя с соответствующим доступом."/>
-        <StackPanel Grid.Row="2">
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Style="{DynamicResource OrdinaryTextBlock}"
+                   Text="Для доступа к настройкам введите учетные данные"/>
+        <StackPanel Grid.Row="2" Margin="0,6,0,0">
             <TextBlock Style="{DynamicResource OrdinaryTextBlock}" Text="Имя пользователя:"></TextBlock>
             <TextBox Style="{DynamicResource OrdinaryTextBox}"
                      Text="{Binding LoginString}"/>
             <TextBlock Style="{DynamicResource OrdinaryTextBlock}" Text="Пароль:"/>
             <PasswordBox Style="{DynamicResource PasswordBoxStyle}"
-                         PasswordChanged="PasswordBox_PasswordChanged"/>
+                         PasswordChanged="PasswordBox_PasswordChanged">
+                <PasswordBox.InputBindings>
+                    <KeyBinding
+                        Key="Return"
+                        Command="{Binding TestKeyBindCommand}"/>
+                </PasswordBox.InputBindings>
+            </PasswordBox>
         </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal" 
                     HorizontalAlignment="Right">

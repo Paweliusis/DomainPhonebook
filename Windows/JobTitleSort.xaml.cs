@@ -15,13 +15,16 @@ using System.Windows.Shapes;
 namespace PhoneBook.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для Test.xaml
+    /// Логика взаимодействия для JobTitleSort.xaml
     /// </summary>
-    public partial class Test : Window
+    public partial class JobTitleSort : Window
     {
-        public Test()
+        public JobTitleSort()
         {
             InitializeComponent();
+            var dataContext = new ViewModels.JobTitleSortViewModel();
+            DataContext = dataContext;
+            dataContext.OnRequestClose += (s, e) => this.Close();
         }
     }
 }

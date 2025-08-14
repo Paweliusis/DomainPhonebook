@@ -24,41 +24,46 @@ namespace PhoneBook.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
         BackgroundWorker worker;
+
         public MainWindowViewModel()
         {
-            //SelectedIndex = -1;
+            Classes.DBConnection.SQLiteDBInit();
+            // Buttons-commands functionation
             this._openSettingsWindowCommand = new Classes.Command(this.OpenSettingsWindow);
-            //this._keyDownBindingCommand = new Classes.Command(this.KeyDownBinding);
-            //this._keyUpBindingCommand = new Classes.Command(this.KeyUpBinding);
-            //this._keyReturnBindingCommand = new Classes.Command(this.KeyReturnBinding);
-            //this._previewMouseUpEventCommand = new Classes.Command(this.PreviewMouseUpEvent);
-            Employees = DBConnection.SelectEmployeesFromDB();
-
-            //UpdateText = false;
-            FilteredEmployees = _fullNames;
             this._submitSearchCommand = new Classes.Command(this.SubmitSearch);
-
-            _employeesView = CollectionViewSource.GetDefaultView(Employees);
-            _employeesView.GroupDescriptions.Add(new PropertyGroupDescription("Department"));
-            //EmployeesView.Filter = i => String.IsNullOrEmpty(SelectedItem) ? true : ((Models.Employee)i).FullName.Contains(SelectedItem)
-            //|| ((Models.Employee)i).Title.Contains(SelectedItem) || ((Models.Employee)i).Department.Contains(SelectedItem);
-
-            //EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
-            //EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
-
             this._exportPhonebookCommand = new Classes.Command(this.ExportPhonebook);
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(Worker_DoWork);
-            worker.RunWorkerAsync();
+            // Buttons-commands functionation
+
+            if (DBConnection.CheckDBConnection())
+            {
+                Employees = DBConnection.SelectEmployeesFromDB();
+
+                FilteredEmployees = _fullNames;
+
+                _employeesView = CollectionViewSource.GetDefaultView(Employees);
+                _employeesView.GroupDescriptions.Add(new PropertyGroupDescription("Department"));
+
+                worker = new BackgroundWorker();
+                worker.DoWork += new DoWorkEventHandler(Worker_DoWork);
+                worker.RunWorkerAsync();
+            }
+            else
+            {
+                ChangeMessage("Невозможно подключиться к БД");
+            }
         }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             while (true)
             {
+                //Random rnd = new Random();
+                //int i = rnd.Next(0, 99);
                 Thread.Sleep(10000);
+                //ChangeMessageAsync("Приступаю к обновлению сотрудников");
                 App.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
                 Refresh()));
+                //TestMessages = $"Hello{i}";
             }
         }
 
@@ -83,9 +88,34 @@ namespace PhoneBook.ViewModels
                     target.Title = update.Title;
                 });
                 Employees.UpdateItems(updatedEmployees, empolyeeMatcher, employeeUpdater);
+                //ChangeMessageAsync("Обновление сотрудников завершено");
             }
             catch (Exception e) { }
         }
+        //Test message async Task
+
+        //public async Task ChangeMessageAsync(string text)
+        //{
+        //    //List<string> words = new List<string> { "Желание", "Ржавый", "Семнадцать",  "Рассвет", "Печь", "Девять",  "Добросердечный",
+        //    //    "Возвращение на Родину", "Один", "Грузовой вагон" };
+        //    //Random rnd = new Random();
+        //    //int num = rnd.Next(0, 9);
+        //    await Task.Run(async () =>
+        //    {
+        //        await Task.Delay(1000);
+        //    });
+        //    TestMessages = text;
+        //    //TestMessages = words[num];
+        //    //TestMessages = text;
+        //}
+
+        private void ChangeMessage(string text)
+        {
+            Messages = text;
+        }
+
+        //Test messsage async Task
+
         private ICollectionView _employeesView;
         public ICollectionView EmployeesView
         {
@@ -416,27 +446,30 @@ namespace PhoneBook.ViewModels
         }
         private void Test()
         {
-            EmployeesView.SortDescriptions.Clear();
-            EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
-            if (SelectedSorting == "ФИО по возрастанию")
+            if (EmployeesView != null)
             {
-                EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
-            }
-            if (SelectedSorting == "ФИО по убыванию")
-            {
-                EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Descending));
-            }
-            if (SelectedSorting == "Должность по возрастанию")
-            {
-                //ListCollectionView ListEmployeesView = EmployeesView as ListCollectionView;
-                //ListEmployeesView.CustomSort = new EmployeeTitleCompare();
-                EmployeesView.SortDescriptions.Add(new SortDescription("HierarchyId", ListSortDirection.Ascending));
-            }
-            if (SelectedSorting == "Должность по убыванию")
-            {
-                EmployeesView.SortDescriptions.Add(new SortDescription("HierarchyId", ListSortDirection.Descending));
-                //ListCollectionView ListEmployeesView = EmployeesView as ListCollectionView;
-                //ListEmployeesView.CustomSort = new EmployeeTitleCompareDescending();
+                EmployeesView.SortDescriptions.Clear();
+                EmployeesView.SortDescriptions.Add(new SortDescription("Department", ListSortDirection.Ascending));
+                if (SelectedSorting == "ФИО по возрастанию")
+                {
+                    EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+                }
+                if (SelectedSorting == "ФИО по убыванию")
+                {
+                    EmployeesView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Descending));
+                }
+                if (SelectedSorting == "Должность по возрастанию")
+                {
+                    //ListCollectionView ListEmployeesView = EmployeesView as ListCollectionView;
+                    //ListEmployeesView.CustomSort = new EmployeeTitleCompare();
+                    EmployeesView.SortDescriptions.Add(new SortDescription("HierarchyId", ListSortDirection.Ascending));
+                }
+                if (SelectedSorting == "Должность по убыванию")
+                {
+                    EmployeesView.SortDescriptions.Add(new SortDescription("HierarchyId", ListSortDirection.Descending));
+                    //ListCollectionView ListEmployeesView = EmployeesView as ListCollectionView;
+                    //ListEmployeesView.CustomSort = new EmployeeTitleCompareDescending();
+                }
             }
         }
 
@@ -456,6 +489,16 @@ namespace PhoneBook.ViewModels
                 Models.Employee temp1 = a as Models.Employee;
                 Models.Employee temp2 = b as Models.Employee;
                 return -DBConnection.SelectTitleWeight(temp1.Title).CompareTo(DBConnection.SelectTitleWeight(temp2.Title));
+            }
+        }
+        private string _messages;
+        public string Messages
+        {
+            get { return _messages; }
+            set
+            {
+                _messages = value;
+                OnPropertyChanged("Messages");
             }
         }
     }

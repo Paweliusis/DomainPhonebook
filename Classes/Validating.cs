@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,10 +33,40 @@ namespace PhoneBook.Classes
             }
             catch (Exception e)
             {
-                MessageBox.Show("Пожалуйста введите пароль", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Что-то пошло не так - {e.Message}", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
+        // Test
+        public static bool ValidateLogInNew(string login, SecureString password)
+        {
+            try
+            {
+                if (Classes.DBConnection.SQLiteCheckLoginInDB(login))
+                {
+                    var passAndSaltUser = DBConnection.SQLiteGetPassAndSalt(login);
+                    string salt = passAndSaltUser[1];
+                    string hashedAndSalted = Classes.Encoding.HashAndSaltPassword(Classes.Encoding.DecodingSecureString(password), salt);
+                    if (passAndSaltUser[0] == hashedAndSalted)
+                    {
+                        //MessageBox.Show($"Password is correct, DB hashSalt - {passAndSaltUser[0]}, and inserted - {hashedAndSalted}");
+                        return true;
+                    }
+                    else
+                    {
+                        //MessageBox.Show($"Password in incorrect, DB hashSalt - {passAndSaltUser[0]}, and inserted - {hashedAndSalted}");;
+                        return false;
+                    }
+                }
+                else { return false; }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Что-то пошло не так - {e.Message}");
+                return false;
+            }
+        }
+        // Test
         public static bool ValidateLogIn(string login)
         {
             if (DBConnection.CheckUsernameInDB(login)) { return true; }

@@ -15,11 +15,8 @@ namespace PhoneBook.Classes
     {
         private static DirectoryEntry CreateDirectoryEntry(string path)
         {
-            //DirectoryEntry ldapConnection = new DirectoryEntry(ip);
             DirectoryEntry ldapConnection = new DirectoryEntry(path);
             var domainName = IPGlobalProperties.GetIPGlobalProperties().DomainName.Split(new char[] { '.' });
-            //ldapConnection.Path = $"LDAP://dc={domainName[0]},DC={domainName[1]}";
-            //ldapConnection.Path = $"LDAP://OU=Компьютеры,OU=6900,dc=fsfk,dc=inet";
             ldapConnection.Path = $"LDAP:// " + path;
             ldapConnection.AuthenticationType = AuthenticationTypes.Secure;
             return ldapConnection;
@@ -47,16 +44,6 @@ namespace PhoneBook.Classes
                 foreach (SearchResult i in searchResults)
                 {
                     DirectoryEntry q = i.GetDirectoryEntry();
-                    ////Models.Employee employee = new Models.Employee();
-                    ////employee.FullName = (q.Properties["displayName"].Value ?? "NoN").ToString();
-                    ////employee.Department = (q.Properties["department"].Value ?? "NoN").ToString();
-                    ////employee.Title = (q.Properties["title"].Value ?? "NoN").ToString();
-                    ////employee.IpPhoneNumber = q.Properties["ipPhone"].Value.ToString();
-                    ////employee.TelephoneNumber = (q.Properties["telephoneNumber"].Value ?? "NoN").ToString();
-                    ////employee.Mail = (q.Properties["mail"].Value ?? "NoN").ToString();
-                    ////employee.OfficeNumber = (q.Properties["physicalDeliveryOfficeName"].Value ?? "NoN").ToString();
-                    ////employee.City = (q.Properties["l"].Value ?? "NoN").ToString();
-                    ////employee.Street = (q.Properties["streetAddress"].Value ?? "NoN").ToString();
                     Models.Employee employee = new Models.Employee()
                     {
                         FullName = (q.Properties["displayName"].Value ?? "NoN").ToString(),
@@ -74,9 +61,9 @@ namespace PhoneBook.Classes
                 searchResults.Dispose();
                 return employees;
             }
-            catch(Exception e) 
+            catch(Exception e)
             { 
-                MessageBox.Show($"{e.Message}");
+                MessageBox.Show($"Что-то пошло не так - {e.Message}");
                 return null;
             }
         }

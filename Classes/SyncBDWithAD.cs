@@ -22,17 +22,10 @@ namespace PhoneBook.Classes
                     }
                     else
                     {
-
-                        //MessageBox.Show(employee.FullName);
-                        //MessageBox.Show(employee.Department);
-                        //MessageBox.Show(employee.Title);
-
                         DBConnection.InsertEmployeeInDB(employee);
                     }
                 });
                 var employeesToDelete = Classes.DBConnection.SelectEmployeesFromDB().Except(employees);
-                //var employeesToDelete = employees.Except(Classes.DBConnection.SelectEmployeesFromDB());
-                //foreach (var i in employeesToDelete) { MessageBox.Show($"{i.FullName}"); }
                 Parallel.ForEach(employeesToDelete, employee => { DBConnection.DeleteEmployeeFromDB(employee); });
                 return true;
             }

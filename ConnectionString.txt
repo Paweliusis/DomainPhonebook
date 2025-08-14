@@ -1,1 +1,0 @@
-﻿server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;port=3306;database=Phonebook; CharSet=utf8

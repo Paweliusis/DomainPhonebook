@@ -17,18 +17,6 @@ namespace PhoneBook.Classes
         {
             try
             {
-                //var dataSet = new DataSet();
-                //var dataTable = new DataTable();
-                //dataSet.Tables.Add(dataTable);
-
-                // we assume that the properties of DataSourceVM are the columns of the table
-                // you can also provide the type via the second parameter
-                //dataTable.Columns.Add("Title");
-                //dataTable.Columns.Add("FullName");
-                //dataTable.Columns.Add("IpPhoneNumber");
-                //dataTable.Columns.Add("TelephoneNumber");
-                //dataTable.Columns.Add("OfficeNumber");
-
                 var Backends = Classes.DBConnection.SelectEmployeesFromDB();
                 var deps = Backends.Select(x => x.Department).Distinct();
 
@@ -66,56 +54,24 @@ namespace PhoneBook.Classes
                         dataTable.Rows.Add(newRow);
                     }
 
-                    //XLWorkbook wb = new XLWorkbook($"{path}\\phonebook.xlsx");
-                    //IXLWorksheet worksheet = wb.Worksheet("phonebook");
-                    //int numb = worksheet.LastRowUsed().RowNumber();
-                    //IXLCell Cellfornew = worksheet.Cell(numb + 1, 1);
                     int numb = ws.LastRowUsed().RowNumber();
                     IXLCell Cellfornew = ws.Cell(numb + 1, 1);
 
                     Cellfornew.SetValue($"{dep}");
-                    //wb.Save();
 
-
-                    //int qwerty = worksheet.LastRowUsed().RowNumber();
-                    //worksheet.Range($"A{qwerty}:E{qwerty}").Merge();
-                    //wb.Save();
                     numb = ws.LastRowUsed().RowNumber();
                     ws.Range($"A{numb}:E{numb}").Merge();
 
-
-                    //numb = worksheet.LastRowUsed().RowNumber();
-                    //Cellfornew = worksheet.Cell(numb + 1, 1);
                     numb = ws.LastRowUsed().RowNumber();
                     Cellfornew = ws.Cell(numb + 1, 1);
 
                     Cellfornew.InsertTable(dataTable);
-                    //wb.Save();
-                    //wb.Dispose();
                     wbook.Save();
-                    //wbook.Dispose();
                     dataTable.Dispose();
                     dataSet.Dispose();
                 }
                 wbook.Dispose();
                 return true;
-                //foreach (var element in Backends)
-                //{
-                //    var newRow = dataTable.NewRow();
-
-                //    // fill the properties into the cells
-                //    newRow["Title"] = element.Title;
-                //    newRow["FullName"] = element.FullName;
-                //    newRow["IpPhoneNumber"] = element.IpPhoneNumber;
-                //    newRow["TelephoneNumber"] = element.TelephoneNumber;
-                //    newRow["OfficeNumber"] = element.OfficeNumber;
-
-                //    dataTable.Rows.Add(newRow);
-                //}
-                //XLWorkbook wb = new XLWorkbook();
-                //wb.Worksheets.Add(dataTable, "example");
-                //wb.SaveAs("example.xlsx");
-                ////Do excel export
             }
             catch (Exception e)
             {

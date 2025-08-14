@@ -47,8 +47,10 @@
     </Reference>
     <Reference Include="netstandard" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,40 +75,28 @@
     <Compile Include="Classes\Encoding.cs" />
     <Compile Include="Classes\Exporting.cs" />
     <Compile Include="Classes\ObservableCollectionExtensions.cs" />
-    <Compile Include="Classes\Reader.cs" />
     <Compile Include="Classes\SyncBDWithAD.cs" />
     <Compile Include="Classes\Validating.cs" />
-    <Compile Include="Classes\Writer.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\JobTitle.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="ViewModels\CreateEditAccountViewModel.cs" />
-    <Compile Include="ViewModels\DBConnectionViewModel.cs" />
     <Compile Include="ViewModels\ExportPhonebookViewModel.cs" />
+    <Compile Include="ViewModels\JobTitleSortViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\AccountsViewModel.cs" />
-    <Compile Include="Windows\CreateEditAccount.xaml.cs">
-      <DependentUpon>CreateEditAccount.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\DBConnectionWindow.xaml.cs">
-      <DependentUpon>DBConnectionWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\ExportPhonebook.xaml.cs">
       <DependentUpon>ExportPhonebook.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\JobTitleSort.xaml.cs">
+      <DependentUpon>JobTitleSort.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Accounts.xaml.cs">
-      <DependentUpon>Accounts.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Test.xaml.cs">
-      <DependentUpon>Test.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -125,15 +115,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\CreateEditAccount.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\DBConnectionWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Windows\ExportPhonebook.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\JobTitleSort.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -142,14 +128,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Settings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Accounts.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -181,11 +159,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ConnectionString.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="ClosedXML">
       <Version>0.100.3</Version>
     </PackageReference>
@@ -200,6 +173,9 @@
     </PackageReference>
     <PackageReference Include="SixLabors.Fonts">
       <Version>1.0.0-beta19</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SQLite">
+      <Version>1.0.119</Version>
     </PackageReference>
     <PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>

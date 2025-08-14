@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using MySql.Data.MySqlClient;
 using PhoneBook.Properties;
+using System.Data.SQLite;
 
 namespace PhoneBook.Classes
 {
     class DBConnection
     {
-        static readonly string connectionString = "server=192.168.0.95;user id=test;password=test;persistsecurityinfo=True;sslmode=None;" +
-    "port=3306;database=Phonebook";
-        //static readonly string connectionString = "server=10.69.163.3;user id=test;password=test;persistsecurityinfo=True;sslmode=None;" +
-        //"port=3306;database=phonebook123;CharSet=utf8";
+        static string GetConnString()
+        {
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["Default"];
+            return settings.ConnectionString;
+        }
+        static readonly string connectionString = GetConnString();
 
         public static bool CheckUsernameInDB(string username, string password)
         {
@@ -72,7 +76,7 @@ namespace PhoneBook.Classes
                     cmd.ExecuteNonQuery();
                     return true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show($"{e.Message}");
                     return false;
@@ -101,7 +105,7 @@ namespace PhoneBook.Classes
                     cmd.ExecuteNonQuery();
                     return true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show($"{e.Message}");
                     return false;
@@ -119,9 +123,9 @@ namespace PhoneBook.Classes
                     MySqlCommand cmd = new MySqlCommand(excst, connection);
                     int isExist = int.Parse(cmd.ExecuteScalar().ToString());
                     if (isExist == 1) { return true; }
-                    else {return false; }
+                    else { return false; }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show($"{e.Message}");
                     return false;
@@ -149,11 +153,11 @@ namespace PhoneBook.Classes
                     cmd.Parameters.AddWithValue("@Street", employee.Street);
                     cmd.ExecuteNonQuery();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show($"{e.Message}");
                 }
-            }    
+            }
         }
         public static ObservableCollection<Models.Account> SelectAccountsFromDB()
         {
@@ -293,8 +297,26 @@ namespace PhoneBook.Classes
                 result = true;
                 connection.Close();
             }
-            catch
+            catch (Exception e)
             {
+                MessageBox.Show(e.Message);
+                result = false;
+            }
+            return result;
+        }
+        public static bool CheckDBConnection()
+        {
+            bool result = false;
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            try
+            {
+                connection.Open();
+                result = true;
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
                 result = false;
             }
             return result;
@@ -326,90 +348,193 @@ namespace PhoneBook.Classes
                 {
                     string commandText = "SELECT JobSortingWeight FROM JobTitles WHERE JobName = '" + jobTitle + "';";
                     MySqlCommand cmd = new MySqlCommand(commandText, connection);
-                    //var temp = cmd.ExecuteScalar().ToString();
-                    //if (String.IsNullOrEmpty(cmd.ExecuteScalar().ToString())) { return 0; }
-                    //else return 0;
-                    var qwe = cmd.ExecuteScalar();
+                    var weight = cmd.ExecuteScalar();
                     connection.Close();
-                    if (qwe == null) { return 99; }
-                    else { return int.Parse(qwe.ToString()); }
+                    if (weight == null) { return 99; }
+                    else { return int.Parse(weight.ToString()); }
                 }
                 catch (Exception e)
                 {
                     return 99;
                 }
             }
-            //if (jobTitle == "Начальник отдела") { return 1; }
-            //if (jobTitle == "Заместитель начальника отдела") { return 2; }
-            //if (jobTitle == "Главный казначей") { return 3; }
-            //if (jobTitle == "Главный специалист-эксперт") { return 4; }
-            //if (jobTitle == "Ведущий специалист-эксперт") { return 5; }
-            //if (jobTitle == "Стариший специалист 1 разряда") { return 6; }
-            //if (jobTitle == "Специалист 1 разряда") { return 7; }
-            //return 99;
         }
-        //public static void WriteSession(string username, string computername)
-        //{
-        //    if (!CheckSessionInDB(username, computername))
-        //    {
-        //        using (MySqlConnection connection = new MySqlConnection(connectionString))
-        //        {
-        //            connection.Open();
-        //            try
-        //            {
-        //                MySqlCommand cmd = connection.CreateCommand();
-        //                cmd.CommandText = "INSERT INTO Sessions (Sessionusername, SessionComputerName) VALUES (@SessionUsername, @SessionComputerName);";
-        //                cmd.Parameters.AddWithValue("@SessionUsername", username);
-        //                cmd.Parameters.AddWithValue("@SessionComputerName", computername);
-        //                cmd.ExecuteNonQuery();
-        //            }
-        //            catch(Exception e)
-        //            {
-        //                MessageBox.Show(e.Message);
-        //            }
-        //        }
-        //    }
-        //}
-        //private static bool CheckSessionInDB(string userName, string computerName)
-        //{
-        //    using (MySqlConnection connection = new MySqlConnection(connectionString))
-        //    {
-        //        connection.Open();
-        //        try
-        //        {
-        //            string exist = "SELECT EXISTS(SELECT * FROM Sessions WHERE SessionUsername = '" + userName + "' AND SessionComputerName = '" +
-        //                computerName + "');";
-        //            MySqlCommand cmd = new MySqlCommand(exist, connection);
-        //            int isExist = int.Parse(cmd.ExecuteScalar().ToString());
-        //            if (isExist == 1) { return true; }
-        //            else { return false; }
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            MessageBox.Show(e.Message);
-        //            return false;
-        //        }
-        //    }
-        //}
-        //public static void DeleteSessionFromDB(string userName, string computerName)
-        //{
-        //    using (MySqlConnection connection = new MySqlConnection(connectionString))
-        //    {
-        //        connection.Open();
-        //        try
-        //        {
-        //            MySqlCommand cmd = connection.CreateCommand();
-        //            cmd.CommandText = "DELETE FROM Sessions WHERE SessionUsername = '" + userName + "' AND SessionComputerName = '" +
-        //                computerName + "';";
-        //            cmd.ExecuteNonQuery();
-        //            connection.Close();
-        //        }
-        //        catch(Exception e)
-        //        {
-        //            MessageBox.Show(e.Message);
-        //        }
-        //    }
-        //}
 
+        public static void SQLiteDBInit()
+        {
+            string dbname = "phonebook.db";
+            string connString = $"Data Source={dbname}";
+
+            using (SQLiteConnection connection = new SQLiteConnection(connString))
+            {
+                connection.Open();
+                try
+                {
+                    string defaultPassword = "qX5X2y3p";
+                    string salt = Classes.Encoding.CreateSalt();
+                    string passWithHash = Classes.Encoding.HashAndSaltPassword(defaultPassword, salt);
+                    string cmdText = "CREATE TABLE IF NOT EXISTS Accounts (Id INTEGER PRIMARY KEY AUTOINCREMENT,Username TEXT UNIQUE NOT NULL,Password TEXT NOT NULL," +
+                        "Salt TEXT UNIQUE NOT NULL); INSERT OR IGNORE INTO Accounts (Username, Password, Salt) VALUES ('Admin', '" + passWithHash + "', '" + salt + "');";
+                    SQLiteCommand cmd = new SQLiteCommand(cmdText, connection);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
+        }
+
+        public static bool SQLiteCheckLoginInDB(string login)
+        {
+            string dbname = "phonebook.db";
+            string connString = $"Data Source={dbname}";
+
+            using (SQLiteConnection connection = new SQLiteConnection(connString))
+            {
+                connection.Open();
+                try
+                {
+                    string exist = "SELECT EXISTS(SELECT * FROM Accounts WHERE Username = '" + login + "');";
+                    SQLiteCommand cmd = new SQLiteCommand(exist, connection);
+                    int isExist = int.Parse(cmd.ExecuteScalar().ToString());
+                    if (isExist == 1) return true;
+                    else return false;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Что-то пошло не так - {e.Message}");
+                    return false;
+                }
+            }
+        }
+
+        public static List<string> SQLiteGetPassAndSalt(string username)
+        {
+            string dbname = "phonebook.db";
+            string connString = $"Data Source={dbname}";
+
+            List<string> passAndSalt = new List<string> { };
+
+            using (SQLiteConnection connection = new SQLiteConnection(connString))
+            {
+                connection.Open();
+                try
+                {
+                    SQLiteCommand cmd = connection.CreateCommand();
+                    cmd.CommandText = "SELECT Password, Salt FROM Accounts WHERE Username = '" + username + "';";
+                    SQLiteDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        passAndSalt.Add(reader["Password"].ToString());
+                        passAndSalt.Add(reader["Salt"].ToString());
+                    }
+                    reader.Close();
+                    return passAndSalt;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return null;
+                }
+            }
+        }
+
+        public static ObservableCollection<Models.JobTitle> SelectJobsRulesFromDB()
+        {
+            ObservableCollection<Models.JobTitle> jobTitles = new ObservableCollection<Models.JobTitle> { };
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                try
+                {
+                    MySqlCommand cmd = connection.CreateCommand();
+                    cmd.CommandText = "SELECT JobName, JobSortingWeight FROM JobTitles;";
+                    MySqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Models.JobTitle jobTitle = new Models.JobTitle();
+                        jobTitle.Name = reader["JobName"].ToString();
+                        jobTitle.Weight = int.Parse(reader["JobSortingWeight"].ToString());
+                        jobTitles.Add(jobTitle);
+                    }
+                    reader.Close();
+                    return jobTitles;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Что-то пошло не так - {e.Message}");
+                    return null;
+                }
+            }
+        }
+
+        public static List<Models.JobTitle> SelectMissingJobTitles()
+        {
+            List<Models.JobTitle> jobTitles = new List<Models.JobTitle> { };
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                try
+                {
+                    MySqlCommand cmd = connection.CreateCommand();
+                    //cmd.CommandText = "SELECT t1.Title FROM Employees t1 LEFT JOIN JobTitles t2 ON t1.Title = t2.JobName WHERE t2.JobName IS NULL;";
+                    cmd.CommandText = "SELECT t1.Title FROM Employees t1 LEFT JOIN JobTitles t2 ON t1.Title = t2.JobName WHERE t2.JobName IS NULL GROUP BY t1.Title;";
+                    MySqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Models.JobTitle jobTitle = new Models.JobTitle();
+                        jobTitle.Name = reader["Title"].ToString();
+                        jobTitle.Weight = 99;
+                        jobTitles.Add(jobTitle);
+                    }
+                    reader.Close();
+                    return jobTitles;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Что-то пошло не так - {e.Message}");
+                    return null;
+                }
+            }
+        }
+        public static void UpdateJobTitleWeight(Models.JobTitle jobTitle)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                try
+                {
+                    MySqlCommand cmd = connection.CreateCommand();
+                    cmd.CommandText = "UPDATE JobTitles SET JobSortingWeight=@JobSortingWeight WHERE JobName=@JobName;";
+                    cmd.Parameters.AddWithValue("@JobSortingWeight", jobTitle.Weight);
+                    cmd.Parameters.AddWithValue("@JobName", jobTitle.Name);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Что-то пошло не так - {e.Message}");
+                }
+            }
+        }
+        public static void InsertJobTitleWeight(Models.JobTitle jobTitle)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                try
+                {
+                    MySqlCommand cmd = connection.CreateCommand();
+                    cmd.CommandText = "INSERT INTO JobTitles (JobName, JobSortingWeight) VALUES (@JobName, @JobSortingWeight);";
+                    cmd.Parameters.AddWithValue("@JobName", jobTitle.Name);
+                    cmd.Parameters.AddWithValue("@JobSortingWeight", jobTitle.Weight);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Что-то пошло не так - {e.Message}");
+                }
+            }
+        }
     }
 }

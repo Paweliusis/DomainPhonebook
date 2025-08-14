@@ -19,6 +19,7 @@
             <RowDefinition Height="46"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="32"/>
         </Grid.RowDefinitions>
         <Label Margin="4,0,0,0">Телефонный справочник</Label>
         <StackPanel Grid.Column="2" HorizontalAlignment="Right"
@@ -152,5 +153,13 @@
                 </DataTemplate>
             </ui:ListView.ItemTemplate>
         </ui:ListView>
+        <Border Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="0,2,0,0"
+                BorderBrush="Black">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Padding="2,2,4,0" Text="{Binding Messages, UpdateSourceTrigger=PropertyChanged}"
+                       Style="{DynamicResource TextBlockInfo}"/>
+                <!--<ui:ProgressRing x:Name="TestProgress" IsActive="True"/>-->
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

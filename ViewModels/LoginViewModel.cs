@@ -22,8 +22,10 @@ namespace PhoneBook.ViewModels
         public LoginViewModel()
         {
             _authenticated = false;
+            //Classes.DBConnection.SQLiteDBInit();
             this._confirmLoginCommand = new Classes.Command(this.ConfirmLogin);
             this._cancelLoginCommand = new Classes.Command(this.CancelLogin);
+            this._testKeyBindCommand = new Classes.Command(this.ConfirmLogin);
         }
 
         private string _loginString;
@@ -45,15 +47,25 @@ namespace PhoneBook.ViewModels
         }
         private void ConfirmLogin(object state)
         {
-            //if (!String.IsNullOrEmpty(LoginString))
+            //if (Classes.Validating.ValidateLogIn(LoginString, SecurePassword))
             //{
-            if (Classes.Validating.ValidateLogIn(LoginString, SecurePassword))
-            {
-                _authenticated = true;
-                OnRequestClose(this, new EventArgs());
-            }
+            //    _authenticated = true;
+            //    OnRequestClose(this, new EventArgs());
             //}
-            //else { MessageBox.Show("Пожалуйста введите имя пользователя", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Error); }
+            if (SecurePassword == null || String.IsNullOrEmpty(LoginString))
+            {
+                MessageBox.Show("Логин или пароль не может быть пустыми", "Login", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                if (Classes.Validating.ValidateLogInNew(LoginString, SecurePassword))
+                {
+                    _authenticated = true;
+                    OnRequestClose(this, new EventArgs());
+                }
+                else { MessageBox.Show("Неправильное имя пользователя или пароль", "Login", MessageBoxButton.OK, MessageBoxImage.Error); }
+            }
+
         }
 
         private bool _authenticated;
@@ -70,6 +82,12 @@ namespace PhoneBook.ViewModels
         private void CancelLogin(object state)
         {
             OnRequestClose(this, new EventArgs());
+        }
+
+        private readonly Classes.Command _testKeyBindCommand;
+        public Classes.Command TestKeyBindCommand
+        {
+            get { return _testKeyBindCommand; }
         }
     }
 }

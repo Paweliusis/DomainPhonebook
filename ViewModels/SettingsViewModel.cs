@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -26,18 +27,25 @@ namespace PhoneBook.ViewModels
         public event EventHandler OnRequestClose;
         public SettingsViewModel()
         {
+            // Initial param to track phonebook change
             PhonebookSynchronized = false;
+            // Initial param to track phonebook change
+            // Commands section
             this._syncWithADCommand = new Classes.Command(this.SyncWithAD);
-            DomainSearchPath = PBParams.domainSearchPath;
-            this._openAccountsCommand = new Classes.Command(this.OpenAccounts);
             this._saveDBConnectionStringCommand = new Classes.Command(this.SaveDBConnectionString);
-            if (String.IsNullOrEmpty(PBParams.DBConnectionString))
-            {
-                DBConnectionString = Classes.Reader.ReadConnectionString();
-            }
-            else { DBConnectionString = PBParams.DBConnectionString; }
-            //DBConnectionString = PBParams.DBConnectionString;
+            this._openJobSortingWindowCommand = new Classes.Command(this.OpenJobSortingWindow);
             this._goBackCommand = new Classes.Command(this.GoBack);
+            // Commands section
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["Default"];
+            DBConnectionString = settings.ConnectionString;
+            DomainSearchPath = PBParams.domainSearchPath;
+            //Classes.DBConnection.SQLiteDBInit();
+            //if (String.IsNullOrEmpty(PBParams.DBConnectionString))
+            //{
+            //    DBConnectionString = Classes.Reader.ReadConnectionString();
+            //}
+            //else { DBConnectionString = PBParams.DBConnectionString; }
+            //DBConnectionString = PBParams.DBConnectionString;DBConnectionString
         }
 
         private readonly Classes.Command _syncWithADCommand;
@@ -107,19 +115,6 @@ namespace PhoneBook.ViewModels
 
         private Settings PBParams = new Settings();
 
-        private readonly Classes.Command _openAccountsCommand;
-        public Classes.Command OpenAccountsCommand
-        {
-            get { return _openAccountsCommand; }
-        }
-        private void OpenAccounts(object state)
-        {
-            var Accounts = new Windows.Accounts();
-            Accounts.Owner = Application.Current.MainWindow;
-            Accounts.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            Accounts.ShowDialog();
-        }
-
         private string _DBConnectionString;
         public string DBConnectionString
         {
@@ -145,11 +140,23 @@ namespace PhoneBook.ViewModels
                 if (Classes.DBConnection.CheckDBConnection(DBConnectionString))
                 {
                     MessageBox.Show($"Соединение с БД успешно", "Настройки", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    //System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    //config.ConnectionStrings.ConnectionStrings["Default"].ConnectionString = DBConnectionString;
+                    //config.Save(ConfigurationSaveMode.Full, true);
+                    //ConfigurationManager.RefreshSection("ConnectionString");
+
+                    Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    ConnectionStringsSection connectionStringsSection = config.ConnectionStrings;
+                    connectionStringsSection.ConnectionStrings["Default"].ConnectionString = DBConnectionString;
+                    config.Save(ConfigurationSaveMode.Modified);
+                    ConfigurationManager.RefreshSection("connectionStrings");
+
                     //PBParams.DBConnectionString = DBConnectionString;
                     //PBParams.Save();
-                    Classes.Writer.WriteDBString(DBConnectionString);
-                    PBParams.DBConnectionString = DBConnectionString;
-                    PBParams.Save();
+                    //Classes.Writer.WriteDBString(DBConnectionString);
+                    //PBParams.DBConnectionString = DBConnectionString;
+                    //PBParams.Save();
                 }
                 else { MessageBox.Show("Невозможно соединиться с БД, пожалуйста, проверьте корректность введенной строки", "Настройки", MessageBoxButton.OK,
                     MessageBoxImage.Error); }
@@ -164,6 +171,19 @@ namespace PhoneBook.ViewModels
         private void GoBack(object state)
         {
             OnRequestClose(this, new EventArgs());
+        }
+
+        private readonly Classes.Command _openJobSortingWindowCommand;
+        public Classes.Command OpenJobSortingCommand
+        {
+            get { return _openJobSortingWindowCommand; }
+        }
+        private void OpenJobSortingWindow(object state)
+        {
+            var JobSorting = new Windows.JobTitleSort();
+            JobSorting.Owner = Application.Current.MainWindow;
+            JobSorting.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            JobSorting.ShowDialog();
         }
     }
 }

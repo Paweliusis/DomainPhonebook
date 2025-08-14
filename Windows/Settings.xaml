@@ -5,39 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PhoneBook.Windows"
         mc:Ignorable="d"
-        Title="Settings" MinHeight="450" MaxHeight="450" MinWidth="420" MaxWidth="420">
+        Title="Settings" MinHeight="450" MaxHeight="450" MinWidth="880" MaxWidth="880">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition MinHeight="46" MaxHeight="46"/>
-            <RowDefinition MinHeight="50" MaxHeight="50"/>
+            <RowDefinition MinHeight="50" MaxHeight="62"/>
             <RowDefinition Height="*"/>
             <RowDefinition MinHeight="50" MaxHeight="50"/>
         </Grid.RowDefinitions>
         <Label>Настройки</Label>
         <StackPanel Grid.Row="1">
-            <TextBlock Padding="0,0,0,6">Строка подключения БД:</TextBlock>
+            <TextBlock Padding="0,0,0,6" Style="{DynamicResource OrdinaryTextBlock}">Параметры БД:</TextBlock>
             <StackPanel Orientation="Horizontal">
-                <TextBox Width="300" HorizontalAlignment="Left"
-                     Style="{DynamicResource OrdinaryTextBox}"
+                <TextBox Width="740" HorizontalAlignment="Left"
+                     Style="{DynamicResource OrdinaryTextBox}" FontSize="16"
                      Text="{Binding DBConnectionString, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                <Button Margin="2,0,0,0" Width="60"
+                <Button Margin="6,0,0,0" Width="60" Height="28"
                         Command="{Binding SaveDBConnectionStringCommand}">Сохранить</Button>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="2"  Orientation="Vertical">
-            <TextBlock Padding="0,6,0,6">Путь синхронизации пользователей:</TextBlock>
-            <TextBox Width="360" HorizontalAlignment="Left" 
-                     Style="{DynamicResource OrdinaryTextBox}"
+            <TextBlock Padding="0,6,0,6" Style="{DynamicResource OrdinaryTextBlock}">Путь до OU пользователей в AD:</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="360" HorizontalAlignment="Left" 
+                     Style="{DynamicResource OrdinaryTextBox}" FontSize="16"
                      Text="{Binding DomainSearchPath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            <TextBlock Padding="0,6,0,6">Синхронизировать 
-                телефонный справочник:</TextBlock>
-            <Button Width="80" Height="40" 
-                    HorizontalAlignment="Left"
+                <Button Margin="6,0,0,0" Width="86" Height="28"
                     Command="{Binding SyncWithADCommand}">Синхронизация</Button>
-            <TextBlock Padding="0,6,0,6" TextWrapping="Wrap">Учетные записи для настроек телефонного справочника:</TextBlock>
-            <Button Width="80" Height="40" 
-                    HorizontalAlignment="Left"
-                    Command="{Binding OpenAccountsCommand}">Редактировать</Button>
+            </StackPanel>
+            <TextBlock Padding="0,6,0,0" Style="{DynamicResource OrdinaryTextBlock}">Редактировать сортировку должностей:</TextBlock>
+            <Button Margin="0,6,0,0" Width="80" Height="28" HorizontalAlignment="Left"
+                    Command="{Binding OpenJobSortingCommand}">Редактировать</Button>
         </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Height="40" Width="80" Margin="0,0,2,0"
